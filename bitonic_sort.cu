@@ -9,17 +9,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
+#include <chrono>
 
 /* Every thread gets exactly one value in the unsorted array. */
 #define THREADS 512 // 2^9
 #define BLOCKS 32768 // 2^15
 #define NUM_VALS THREADS*BLOCKS
-
-void print_elapsed(clock_t start, clock_t stop)
-{
-  double elapsed = ((double) (stop - start)) / CLOCKS_PER_SEC;
-  printf("Elapsed time: %.3fs\n", elapsed);
-}
 
 float random_float()
 {
@@ -42,6 +37,17 @@ void array_fill(float *arr, int length)
   for (i = 0; i < length; ++i) {
     arr[i] = random_float();
   }
+}
+
+bool verify_sorted(const float *arr, int length) {
+  for (int i = 0; i < length - 1; ++i) {
+    if (arr[i] > arr[i + 1]) {
+      printf("Sort error at indexes %d and %d\n", i, i + 1);
+      return false;
+    }
+  }
+  printf("Array sorted correctly\n");
+  return true;
 }
 
 __global__ void bitonic_sort_step(float *dev_values, int j, int k)
@@ -87,6 +93,9 @@ void bitonic_sort(float *values)
   dim3 blocks(BLOCKS,1);    /* Number of blocks   */
   dim3 threads(THREADS,1);  /* Number of threads  */
 
+  using clock_type = std::chrono::high_resolution_clock;
+  auto t1 = clock_type::now();
+
   int j, k;
   /* Major step */
   for (k = 2; k <= NUM_VALS; k <<= 1) {
@@ -95,20 +104,29 @@ void bitonic_sort(float *values)
       bitonic_sort_step<<<blocks, threads>>>(dev_values, j, k);
     }
   }
+
+  cudaDeviceSynchronize();
+  auto t2 = clock_type::now();
+  cudaError_t error = cudaGetLastError();
+  if (error != cudaSuccess) {
+    printf("CUDA error: %s\n", cudaGetErrorString(error));
+    exit(-1);
+  }
+  std::chrono::duration<double, std::milli> ms = t2 - t1;
+  printf("Kernel wall time elapsed: %g ms\n", ms.count());
+
   cudaMemcpy(values, dev_values, size, cudaMemcpyDeviceToHost);
   cudaFree(dev_values);
 }
 
 int main(void)
 {
-  clock_t start, stop;
-
-  float *values = (float*) malloc( NUM_VALS * sizeof(float));
+  float *values = (float*) malloc(NUM_VALS * sizeof(float));
   array_fill(values, NUM_VALS);
 
-  start = clock();
-  bitonic_sort(values); /* Inplace */
-  stop = clock();
+  bitonic_sort(values);
+  verify_sorted(values, NUM_VALS);
 
-  print_elapsed(start, stop);
+  free(values);
+  return 0;
 }
