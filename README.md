@@ -4,12 +4,8 @@
 
 
 
-DocViewer
-Page
-of 6
-Pages
-CS 6850 - Assignment – GPU Bitonic Sort
-Brad Peterson - Weber State University
+GPU Bitonic Sort. 
+
 Overall goal: Implement optimized CUDA code by improving a naïve algorithm.
 Secondary goals:
 ● Gain experience in more complicated indexing problems.
