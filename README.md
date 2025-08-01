@@ -482,7 +482,7 @@ Kernel wall time elapsed: 0.909789 ms
 
 Array sorted correctly
 
-kb24850@morpheus:~/cs6850-sum25$ 
+kb24850@morpheus:~/cs6850-sum25$ this output is outdated. i need to update the morpheus code and re-run the output
 
 
 
