@@ -432,6 +432,44 @@ chart with overall speedup from the baseline. Compare times on 2^30 total array 
 approaches you made beyond these instructions. For example, for Modification #3, I want to know how many pairs of
 indexes each CUDA thread operates on.
 
+Here's my output so far:
+
+kb24850@morpheus:~$ cd cs6850-sum25
+
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 bitonic_sort.cu -o bitonic_sort.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./bitonic_sort.x
+
+Kernel wall time elapsed: 12.8518 ms
+
+Array sorted correctly
+
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod1.cu -o mod1.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./mod1.x
+
+Kernel wall time elapsed: 0.934024 ms
+
+Array sorted correctly
+
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod2.cu -o mod2.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./mod2.x
+
+Kernel wall time elapsed: 0.681902 ms
+
+Array sorted correctly
+
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod3.cu -o mod3.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./mod3.x
+
+Kernel wall time elapsed: 0.909789 ms
+
+Array sorted correctly
+
+kb24850@morpheus:~/cs6850-sum25$ 
+
 
 
 --------------------------------------------------------------------------------------------------------------------------
