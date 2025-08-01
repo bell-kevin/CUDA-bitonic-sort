@@ -154,6 +154,22 @@ After compiling, you can run the program with:
 
 ./bitonic_sort.x
 
+For mod1.cu, mod2.cu, and mod3.cu you replace the input and output filenames but otherwise follow the same pattern:
+
+/usr/local/cuda-12/bin/nvcc -arch=sm_86 mod1.cu -o mod1.x
+
+/usr/local/cuda-12/bin/nvcc -arch=sm_86 mod2.cu -o mod2.x
+
+/usr/local/cuda-12/bin/nvcc -arch=sm_86 mod3.cu -o mod3.x
+
+Run each compiled program with:
+
+./mod1.x
+
+./mod2.x
+
+./mod3.x
+
 This algorithm has a few problems, namely:
 
 1) The first CUDA kernel’s if statement throws away half of allocated GPU threads to keep its indexing logic
