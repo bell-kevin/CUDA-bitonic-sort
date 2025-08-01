@@ -12,7 +12,8 @@
 #include <chrono>
 
 /* Array size must be power of 2 */
-#define ARRAY_SIZE (1<<20)
+/* Use 2^30 values for timing comparisons as noted in the README. */
+#define ARRAY_SIZE (1<<30)
 #define THREADS 256
 #define BLOCKS ((ARRAY_SIZE/2 + THREADS - 1) / THREADS)
 #define NUM_VALS ARRAY_SIZE

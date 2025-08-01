@@ -12,7 +12,8 @@
 #include <chrono>
 
 /* Array size must be a power of 2 */
-#define ARRAY_SIZE (1<<20)
+/* Use 2^30 values for the final timing comparison. */
+#define ARRAY_SIZE (1<<30)
 /* Threads per block */
 #define THREADS 256
 /* Each thread handles a pair of values so total threads is ARRAY_SIZE/2 */

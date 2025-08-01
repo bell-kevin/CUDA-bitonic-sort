@@ -180,6 +180,10 @@ Run each compiled program with:
 
 ./mod3.x
 
+For the final timing comparison the assignment requests sorting **2^30** values.
+The source files have `ARRAY_SIZE` (or `NUM_VALS`) set accordingly. Ensure your
+GPU has at least 4 GB of memory before running these large tests.
+
 This algorithm has a few problems, namely:
 
 1) The first CUDA kernel’s if statement throws away half of allocated GPU threads to keep its indexing logic
