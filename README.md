@@ -7,14 +7,24 @@
 GPU Bitonic Sort. 
 
 Overall goal: Implement optimized CUDA code by improving a naïve algorithm.
+
 Secondary goals:
+
 ● Gain experience in more complicated indexing problems.
+
 ● Know how to correctly group parallel threads with barriers to prevent race conditions
+
 Background:
+
 Academia sometimes creates an image of a professor and students high on an ivory tower, effortlessly turning theory
 into pseudocode and into C++ code. In reality, we often just use Google or AI, find an existing algorithm, then clean
-that up. This assignment does not deny this reality.
-A fairly straightforward description of a bitonic sort can be given in both text and in pictures. The single threaded CPU
+that up. 
+
+This assignment does not deny this reality.
+
+A fairly straightforward description of a bitonic sort can be given in both text and in pictures.
+
+The single threaded CPU
 implementation is also fairly clean and straightforward. Consider the following figure:
 This approach can represent 8 CPU threads operating on 16 elements. For example, the first two black lines are
 thread 0, the second two black lines are thread 1, and so on. Thread 0 compares arr[1] < arr[0], and if true, swaps
