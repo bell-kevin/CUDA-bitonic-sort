@@ -150,6 +150,10 @@ To compile we'll use:
 
 /usr/local/cuda-12/bin/nvcc -arch=sm_86 bitonic_sort.cu -o bitonic_sort.x
 
+After compiling, you can run the program with:
+
+./bitonic_sort.x
+
 This algorithm has a few problems, namely:
 
 1) The first CUDA kernel’s if statement throws away half of allocated GPU threads to keep its indexing logic
