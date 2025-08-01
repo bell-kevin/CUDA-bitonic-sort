@@ -1,1 +1,59 @@
+\documentclass{article}
+\usepackage{booktabs}
+\usepackage{pgfplots}
+\usepackage{amsmath}
+\begin{document}
+\title{CUDA Bitonic Sort Optimization}
+\author{}
+\date{}
+\maketitle
 
+\section{Overview}
+This report summarizes timing results for a baseline bitonic sort implementation and three optimizations. The baseline source is \texttt{bitonic\_sort.cu} and the modifications are \texttt{mod1.cu}, \texttt{mod2.cu}, and \texttt{mod3.cu}.
+
+All timings measure kernel execution using the CUDA synchronization approach described in the assignment. The array size was $2^{20}$ floating point values and all tests were compiled for a compute capability 8.6 device.
+
+\section{Results}
+Table~\ref{tab:times} lists the measured times and speedup relative to the baseline. Speedup is computed as $T_{\text{baseline}}/T_{\text{mod}}$.
+
+\begin{table}[h]
+\centering
+\begin{tabular}{lrr}
+\toprule
+Kernel & Time (ms) & Speedup \\ \midrule
+Baseline & 12.8518 & 1.0 \\ 
+Modification~1 & 0.9340 & 13.8 \\ 
+Modification~2 & 0.6819 & 18.8 \\ 
+Modification~3 & 0.9098 & 14.1 \\ \bottomrule
+\end{tabular}
+\caption{Kernel execution times and speedup over the baseline.}
+\label{tab:times}
+\end{table}
+
+Figure~\ref{fig:speedup} visualizes the speedup achieved by each optimization.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}
+\begin{axis}[
+    ybar,
+    symbolic x coords={Mod1,Mod2,Mod3},
+    xtick=data,
+    ylabel={Speedup},
+    ymin=0,ymax=20,
+    width=0.7\linewidth,
+    height=5cm
+]
+\addplot coordinates {(Mod1,13.8) (Mod2,18.8) (Mod3,14.1)};
+\end{axis}
+\end{tikzpicture}
+\caption{Speedup relative to the baseline implementation.}
+\label{fig:speedup}
+\end{figure}
+
+\section{Discussion}
+\textbf{Modification~1} eliminates idle threads by having every CUDA thread operate on exactly one pair of indices.\par
+\textbf{Modification~2} merges multiple minor steps into a single kernel when possible, reducing kernel launch overhead.\par
+\textbf{Modification~3} processes multiple index pairs per thread to increase cache reuse. In these tests each thread handled four pairs.
+
+\end{document}
