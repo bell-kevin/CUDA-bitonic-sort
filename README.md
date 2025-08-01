@@ -163,6 +163,7 @@ simple. This is wasteful and affects resources and performance.
 4) Each thread is responsible for swapping a single pair of values and nothing more. A thread has no additional
 function beyond that.
 Instructions:
+
 This assignment requires that you incrementally improve the algorithm in three ways and report the results.
 Start by verifying you can download, compile, and run the application.
 Modify the code so that it times the kernel execution only, and not the copy in/copy out times.
@@ -187,7 +188,9 @@ Start by implementing a check to verify it sorts all values correctly. This shou
 copied back to host memory. If when any value at index i is greater than a value at index i + 1, print that an issue was
 found and what indexes they were. This will help greatly for later debugging. If no issues were found, print that it
 sorted correctly.
+
 Modification #1 – Preventing throwing away threads:
+
 This step can feel like indexing hell. Thus, proceed carefully by cleaning up the code, understanding the code in detail,
 and documenting each step. The first part of this Modification #1 is prepping your code and documenting it. Create
 your own algorithm design spreadsheet whose values mirror what the kernel is computing for its values. Some steps I
@@ -231,7 +234,9 @@ Continue to increase the array size until it matches your initial comparison ben
 Obtain timings. Make sure you remove all printf statements and all cudaDeviceSynchronize() prior to obtaining
 this timing (except the last one before the timer records t2). Save this .cu as a separate finished file (mod1.cu) as it’s
 needed for your submission.
+
 Modification #2 – Merge together kernels
+
 This step requires you split apart the j/set loop and place some iterations in CPU code and some iterations in GPU
 code. The overall concept is that when one kernel’s block of threads work with indexes that are independent of
 another kernel’s block of threads, then the j/set loop can now iterate inside the kernel, rather than requiring multiple
@@ -307,7 +312,9 @@ of your computer science career and start a new life off-grid without electricit
 Obtain timings. Make sure you remove all printf statements and all cudaDeviceSynchronize() prior to obtaining
 this timing (except the last one before the timer records t2). Save this .cu as a separate finished file (mod2.cu) as it’s
 needed for your submission.
+
 Modification #3 – Have threads do more than just one swap per iteration
+
 The code up until now has had one thread operating on one pair of values at a time. The goal here is to have each
 thread operating on many pairs of values, which in turn better utilizes GPU cache and resources.
 • This step requires changing the indexing logic. Suppose you want each GPU thread to work with four pairs of
