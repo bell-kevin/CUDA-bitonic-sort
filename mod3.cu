@@ -12,7 +12,8 @@
 #include <chrono>
 
 /* Array size for the sort (power of two) */
-#define ARRAY_SIZE (1<<20)
+/* Final benchmarking uses 2^30 values */
+#define ARRAY_SIZE (1<<30)
 /* Threads per block */
 #define THREADS 256
 /* blocks depend on how many pairs each thread handles */

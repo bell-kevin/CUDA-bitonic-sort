@@ -12,9 +12,13 @@
 #include <chrono>
 
 /* Every thread gets exactly one value in the unsorted array. */
-#define THREADS 512 // 2^9
-#define BLOCKS 32768 // 2^15
-#define NUM_VALS THREADS*BLOCKS
+/*
+ * For the final timing comparison the README requests sorting 2^30 values.
+ * With 512 threads per block this requires 2^21 blocks.
+ */
+#define THREADS 512       // 2^9
+#define BLOCKS 2097152    // 2^21
+#define NUM_VALS ((size_t)THREADS * BLOCKS)
 
 float random_float()
 {
