@@ -195,18 +195,25 @@ This step can feel like indexing hell. Thus, proceed carefully by cleaning up th
 and documenting each step. The first part of this Modification #1 is prepping your code and documenting it. Create
 your own algorithm design spreadsheet whose values mirror what the kernel is computing for its values. Some steps I
 found helpful:
+
 • Rework the logic to enable writing the array size as one variable value, then computing the blocks off that. This
 allows you to more easily change the array size during testing.
+
 • Rename the variables so that they are a bit more intuitive (such as round instead of k, set instead of j,
 threadID instead of i, etc.)
+
 • Use printf inside the kernel to indicate the round, set, array indexes, and if it’s doing an ascending/min or
 descending/max.
+
 • Add a cudaDeviceSynchronize() after every kernel call so that everything in the GPU printf buffer is
 returned and prints after each kernel invocation (you will want to comment this out for your timing later).
+
 • Set the starter program to something small, such as a small array requiring only 16 CUDA threads and 1 block.
 Run the program and obtain a list of values. Populate your spreadsheet with these values.
+
 • Save this program as a temporary .cu file (such as sort-printf.cu). You will likely come back to it to compare its
 printf statements with the modified code’s printf you write later.
+
 • In your algorithm design spreadsheet, visually mark which CUDA threads are kept and which ones are thrown
 away (such as highlighting kept rows).
 At this point, your spreadsheet should have columns for the threadID, round, set, and what indexes that thread
@@ -215,6 +222,7 @@ The statement if ((ixj)>i) { doesn’t use half of the CUDA threads. Rework your
 participates. Your goal is to get each CUDA thread to work on two indexes total. That will require half as many CUDA
 threads to work on the same array size (or said another way, you can keep the number of threads per CUDA block the
 same, and just have your kernel now work with twice as many index values as before).
+
 • Using the spreadsheet, create a second set of columns. In these columns, find a way to generate all array
 index compare and swaps so that every thread now participates on two indexes, and does the comparison
 properly. I personally changed the i variable to threadID, changed [i] to [index1], and [ixj] to [index2].
@@ -224,10 +232,13 @@ QUOTIENT(var1, var2) in spreadsheet formulas). Bitwise instructions will probabl
 Note that the rows won’t match with values. Previously half of the threads did no work. But in this new set of
 columns, all threads work on two indexes. Just make sure that all indexes are properly covered in the new
 indexes.
+
 • Once the new spreadsheet columns demonstrate proper logic, translate this into CUDA/C++ code. Update
 accordingly the printf statements for debugging/comparison.
+
 • Update the kernel invocation to account for the fact that somehow you need only half as many threads as
 before (or said another way, each kernel can work with twice as many index values).
+
 • Test your code and ensure it sorts. Carefully dial up the array size by increasing powers of two. Test and
 ensure it works. Increase the array size so that two CUDA blocks are required. Test and ensure it works.
 Continue to increase the array size until it matches your initial comparison benchmark.
@@ -241,72 +252,118 @@ This step requires you split apart the j/set loop and place some iterations in C
 code. The overall concept is that when one kernel’s block of threads work with indexes that are independent of
 another kernel’s block of threads, then the j/set loop can now iterate inside the kernel, rather than requiring multiple
 kernel calls.
+
 The below figure is the goal. Here the array is 32 elements, each CUDA thread block is 8 threads, and each thread
 works on one element of the array (all threads do work). Each blue box is a kernel call. Each purple box is a block.
 Each green line is a __syncthreads() barrier to prevent a race condition. Each kernel gets two thread blocks.
 (Unused optimization: Technically the first 4 kernels (blue boxes) could be rearranged into a different pattern of two
 kernels as there aren’t any dependencies. In other words, in the figure’s first 4 kernels, data between [0,15] never
 interacts with data between [16,31].)
+
 The visual perspective can be generalized. If a CUDA thread block is 16 threads, then the number of blocks per kernel
 is 1, then the final two kernels (blue boxes) can be merged into one, and one block (purple box) is used per kernel,
 and the final kernel would have 4 __syncthreads calls (green lines).
 Another way to see the pattern is observing j loop iterations in a GPU kernel. Here each thread block is 8:
+
 1 iteration (j = 1)
+
 2 iterations (j = 2, 1)
+
 3 iterations (j = 4, 2, 1)
+
 4 iterations (j = 8, 4, 2, 1)
+
 1 iteration (j = 16)
+
 4 iterations (j = 8,4,2,1) < - - - - - - The figure ends here
+
 1 iteration (j = 32)
+
 1 iteration (j = 16)
+
 4 iterations (j = 8,4,2,1)
+
 1 iteration (j = 64)
+
 1 iteration (j = 32)
+
 1 iteration (j = 16)
+
 4 iterations (j = 8,4,2,1)
+
 ... and so on ...
+
 For 512 threads per block it becomes:
+
 1 iteration (j = 1)
+
 2 iterations (j = 2, 1)
+
 3 iterations (j = 4, 2, 1)
+
 4 iterations (j = 8, 4, 2, 1)
+
 5 iterations (j = 16, 8, 4, 2, 1)
+
 6 iterations (j = 32, 16, 8, 4, 2, 1)
+
 7 iterations (j = 64, 32, 16, 8, 4, 2, 1)
+
 8 iterations (j = 128, 64, 32, 16, 8, 4, 2, 1)
+
 9 iterations (j = 256, 128, 64, 32, 16, 8, 4, 2, 1)
+
 1 iteration (j = 512)
+
 9 iterations (j = 256, 128, 64, 32, 16, 8, 4, 2, 1)
+
 1 iteration (j = 1024)
+
 1 iteration (j = 512)
+
 9 iterations (j = 256, 128, 64, 32, 16, 8, 4, 2, 1)
+
 1 iteration (j = 2048)
+
 1 iteration (j = 1024)
+
 1 iteration (j = 512)
+
 9 iterations (j = 256, 128, 64, 32, 16, 8, 4, 2, 1)
+
 ... and so on ...
+
 This step again can feel like indexing hell. I recommend the following:
+
 • Start by sizing down the array so that only one thread block is used. Ensure that each kernel calls only 1 block.
 For example, an array of 32 indexes and thread blocks is 16. Get this to work before attempting larger arrays.
+
 • Implement a j/set loop inside of the GPU code. At the last line inside the GPU’s j loop, add __syncthreads()
 to prevent a race condition where one warp within a block may get ahead and compute before other warps
 have started.
+
 • Compute the GPU j/set loop start value and j/set loop end value in CPU code. Pass those as arguments into
 the kernel and modify the loop to use those parameters. For example, when k = 16, then j’s GPU start and end
 indexes are 8 and 1, so that it can iterate 8, 4, 2, and 1. But when k = 32, then j’s GPU start and end indexes
 should be 16 and 16.
+
 • I found this last step particularly tricky even though the resulting solution ended up simple and clean. What
 helped me was to rewrite the CPU’s j for loop into a do while loop. The do while loop ensured the kernel is at
 least called once. I also modified the loop to have a new termination condition.
+
 • Add printf statements after the GPU loop to indicate k/round, the current j/set iteration value, and other
 values you deem helpful. Add this printf statement inside an if statement that only executes if threadId.x or
 threadID is 0. You don’t want this printf displaying for every CUDA thread, that’s unnecessary info. Add back
 in the cudaDeviceSynchronize() after the kernel call so your printf statements are copied back to host and
 displayed after each kernel invocation.
+
 • Compile, run, and verify the sort is still correct.
+
 • Increase the array size until it maxes out one CUDA block. Verify it sorts correctly.
+
 • Change values so that two blocks are used. Simplify the problem to a small array size and to 16 threads per
 block.
+
 • Compile, test, and verify. Increase the array size and retest. When bugs occur, resist the temptation to drop out
 of your computer science career and start a new life off-grid without electricity or technology.
 Obtain timings. Make sure you remove all printf statements and all cudaDeviceSynchronize() prior to obtaining
@@ -317,6 +374,7 @@ Modification #3 – Have threads do more than just one swap per iteration
 
 The code up until now has had one thread operating on one pair of values at a time. The goal here is to have each
 thread operating on many pairs of values, which in turn better utilizes GPU cache and resources.
+
 • This step requires changing the indexing logic. Suppose you want each GPU thread to work with four pairs of
 array indexes instead of one pair. Change your indexing logic so that each CUDA thread computes the same
 as before, then increments by some group size, repeats the bitonic logic on new indexes, increments by some
@@ -327,23 +385,32 @@ have thread 0 sort indexes [0] and [1]. Then after all warps have computed their
 [256] and [257]. Then sorts indexes [512] and [513], and then sorts indexes [768] and [769] accordingly. Avoid
 having thread 0 in this example operate on index [0] and [1], then [2] and [3], then [4] and [4], then [6] and [7],
 as this results in bad GPU memory coalescing.
+
 • This step requires another loop inside of the GPU code. It will go inside of the j/set GPU loop. (You can choose
 to add #pragma unroll X, where X is some integer, to have the compiler manually unroll the loop.)
+
 • The number of CUDA blocks must be reduced to match the number of times this new GPU inner loop iterates.
 In other words, if each thread operates on four times as many pairs of values, then four times fewer blocks are
 required.
+
 • Determine the new indexing logic. I recommend returning to the spreadsheet here and verifying before
 implementing code.
+
 • Start with small threads per block and start with one block. Add in printf and cudaDeviceSynchronize() as
 necessary. Test often while increasing the array size and then later the number of blocks.
+
 • Fine tune your code by modifying how many pairs of indexes each thread can work on. Find an optimal value
 and use that for your final timing.
+
 Make sure you remove all printf statements and all cudaDeviceSynchronize() prior to obtaining this timing
 (except the last one before the timer records t2).
+
 Remember again to test to make sure all values sorted. Also test to make sure all input values came out (ensuring no
 input value got duplicated or garbage data got mixed in). For this test, I replaced all floats with unit32_t, then loaded
 the array with reverse sorted numbers. I then verified that every index i contains the value i.
+
 Submission:
+
 Submit all .cu code files from which timings were obtained. Prepare a simple report with results. Show the times in
 chart with overall speedup from the baseline. Compare times on 2^30 total array values. Explain any relevant
 approaches you made beyond these instructions. For example, for Modification #3, I want to know how many pairs of
