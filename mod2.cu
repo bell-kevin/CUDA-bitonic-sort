@@ -115,7 +115,12 @@ void bitonic_sort(float *values)
   dim3 threads(THREADS,1);  /* Number of threads  */
 
   using clock_type = std::chrono::high_resolution_clock;
-  auto t1 = clock_type::now();
+  auto start = clock_type::now();
+  int stages = 0;
+  for (size_t tmp = NUM_VALS; tmp > 1; tmp >>= 1) ++stages;
+  int total_steps = stages * (stages + 1) / 2;
+  int completed_steps = 0;
+  int last_percent = -1;
 
   int k;
   /* Major step */
@@ -126,21 +131,48 @@ void bitonic_sort(float *values)
        combined inside a single kernel */
     while (j > THREADS) {
       bitonic_step<<<blocks, threads>>>(dev_values, j, k);
+      cudaDeviceSynchronize();
+      completed_steps++;
+      auto now = clock_type::now();
+      double elapsed = std::chrono::duration<double>(now - start).count();
+      int percent = completed_steps * 100 / total_steps;
+      while (percent > last_percent) {
+        double est_total = elapsed / completed_steps * total_steps;
+        double remaining = est_total - elapsed;
+        last_percent++;
+        printf("Progress: %d%% done, ETA %.2f s\n", last_percent, remaining);
+      }
       j >>= 1;
     }
 
     /* Remaining j values are computed inside one kernel launch */
+    int steps_in_block = 0;
+    int tmp_j = j;
+    while (tmp_j >= 1) {
+      steps_in_block++;
+      tmp_j >>= 1;
+    }
     bitonic_block<<<blocks, threads>>>(dev_values, j, 1, k);
+    cudaDeviceSynchronize();
+    completed_steps += steps_in_block;
+    auto now = clock_type::now();
+    double elapsed = std::chrono::duration<double>(now - start).count();
+    int percent = completed_steps * 100 / total_steps;
+    while (percent > last_percent) {
+      double est_total = elapsed / completed_steps * total_steps;
+      double remaining = est_total - elapsed;
+      last_percent++;
+      printf("Progress: %d%% done, ETA %.2f s\n", last_percent, remaining);
+    }
   }
 
-  cudaDeviceSynchronize();
   auto t2 = clock_type::now();
   cudaError_t error = cudaGetLastError();
   if (error != cudaSuccess) {
     printf("CUDA error: %s\n", cudaGetErrorString(error));
     exit(-1);
   }
-  std::chrono::duration<double, std::milli> ms = t2 - t1;
+  std::chrono::duration<double, std::milli> ms = t2 - start;
   printf("Kernel wall time elapsed: %g ms\n", ms.count());
 
   cudaMemcpy(values, dev_values, size, cudaMemcpyDeviceToHost);
