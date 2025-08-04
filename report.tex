@@ -54,6 +54,6 @@ Figure~\ref{fig:speedup} visualizes the speedup achieved by each optimization.
 \section{Discussion}
 \textbf{Modification~1} eliminates idle threads by having every CUDA thread operate on exactly one pair of indices.\par
 \textbf{Modification~2} merges multiple minor steps into a single kernel when possible, reducing kernel launch overhead.\par
-\textbf{Modification~3} processes multiple index pairs per thread to increase cache reuse. In these tests each thread handled four pairs.
+\textbf{Modification~3} builds on the merged-kernel approach by keeping the j/set loop inside the kernel while each thread processes multiple index pairs to increase cache reuse. In these tests each thread handled four pairs.
 
 \end{document}
