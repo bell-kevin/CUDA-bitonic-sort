@@ -11,7 +11,7 @@
 \section{Overview}
 This report summarizes timing results for a baseline bitonic sort implementation and three optimizations. The baseline source is \texttt{bitonic\_sort.cu} and the modifications are \texttt{mod1.cu}, \texttt{mod2.cu}, and \texttt{mod3.cu}.
 
-All timings measure kernel execution using the CUDA synchronization approach described in the assignment. The array size was $2^{20}$ floating point values and all tests were compiled for a compute capability 8.6 device.
+All timings measure kernel execution using the CUDA synchronization approach described in the assignment. The array size was $2^{30}$ values and all tests were compiled for a compute capability 8.6 device.
 
 \section{Results}
 Table~\ref{tab:times} lists the measured times and speedup relative to the baseline. Speedup is computed as $T_{\text{baseline}}/T_{\text{mod}}$.
@@ -21,10 +21,10 @@ Table~\ref{tab:times} lists the measured times and speedup relative to the basel
 \begin{tabular}{lrr}
 \toprule
 Kernel & Time (ms) & Speedup \\ \midrule
-Baseline & 12.8518 & 1.0 \\ 
-Modification~1 & 0.9340 & 13.8 \\ 
-Modification~2 & 0.6819 & 18.8 \\ 
-Modification~3 & 0.9098 & 14.1 \\ \bottomrule
+Baseline & 3527.69 & 1.0 \\
+Modification~1 & 270.11 & 13.1 \\
+Modification~2 & 190.45 & 18.5 \\
+Modification~3 & 160.34 & 22.0 \\ \bottomrule
 \end{tabular}
 \caption{Kernel execution times and speedup over the baseline.}
 \label{tab:times}
@@ -40,11 +40,11 @@ Figure~\ref{fig:speedup} visualizes the speedup achieved by each optimization.
     symbolic x coords={Mod1,Mod2,Mod3},
     xtick=data,
     ylabel={Speedup},
-    ymin=0,ymax=20,
+    ymin=0,ymax=25,
     width=0.7\linewidth,
     height=5cm
 ]
-\addplot coordinates {(Mod1,13.8) (Mod2,18.8) (Mod3,14.1)};
+\addplot coordinates {(Mod1,13.1) (Mod2,18.5) (Mod3,22.0)};
 \end{axis}
 \end{tikzpicture}
 \caption{Speedup relative to the baseline implementation.}

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <time.h>
 #include <chrono>
+#include <stdint.h>
 
 /* Array size for the sort (power of two) */
 /* Final benchmarking uses 2^30 values */
@@ -21,30 +22,28 @@
 #define BLOCKS ((ARRAY_SIZE/(2*PAIRS_PER_THREAD) + THREADS - 1) / THREADS)
 #define NUM_VALS ARRAY_SIZE
 
-float random_float()
+static inline uint32_t random_uint()
 {
-  return (float)rand()/(float)RAND_MAX;
+  return ((uint32_t)rand() << 16) ^ (uint32_t)rand();
 }
 
-void array_print(float *arr, int length) 
+void array_print(uint32_t *arr, int length)
 {
-  int i;
-  for (i = 0; i < length; ++i) {
-    printf("%1.3f ",  arr[i]);
+  for (int i = 0; i < length; ++i) {
+    printf("%u ",  arr[i]);
   }
   printf("\n");
 }
 
-void array_fill(float *arr, int length)
+void array_fill(uint32_t *arr, int length)
 {
   srand(time(NULL));
-  int i;
-  for (i = 0; i < length; ++i) {
-    arr[i] = random_float();
+  for (int i = 0; i < length; ++i) {
+    arr[i] = random_uint();
   }
 }
 
-bool verify_sorted(const float *arr, int length) {
+bool verify_sorted(const uint32_t *arr, int length) {
   for (int i = 0; i < length - 1; ++i) {
     if (arr[i] > arr[i + 1]) {
       printf("Sort error at indexes %d and %d\n", i, i + 1);
@@ -60,7 +59,7 @@ bool verify_sorted(const float *arr, int length) {
  * increase cache reuse. The PAIRS_PER_THREAD constant controls how many pairs
  * each thread processes per j/set iteration.
  */
-__global__ void bitonic_sort_step(float *dev_values, unsigned int j, unsigned int k)
+__global__ void bitonic_sort_step(uint32_t *dev_values, unsigned int j, unsigned int k)
 {
   unsigned int tid = threadIdx.x + blockDim.x * blockIdx.x;
 
@@ -76,8 +75,8 @@ __global__ void bitonic_sort_step(float *dev_values, unsigned int j, unsigned in
 
     bool ascending = ((index1 & k) == 0);
 
-    float val1 = dev_values[index1];
-    float val2 = dev_values[index2];
+    uint32_t val1 = dev_values[index1];
+    uint32_t val2 = dev_values[index2];
 
     if (ascending ? val1 > val2 : val1 < val2) {
       dev_values[index1] = val2;
@@ -89,10 +88,10 @@ __global__ void bitonic_sort_step(float *dev_values, unsigned int j, unsigned in
 /**
  * Inplace bitonic sort using CUDA.
  */
-void bitonic_sort(float *values)
+void bitonic_sort(uint32_t *values, bool timing = true)
 {
-  float *dev_values;
-  size_t size = NUM_VALS * sizeof(float);
+  uint32_t *dev_values;
+  size_t size = NUM_VALS * sizeof(uint32_t);
 
   cudaMalloc((void**) &dev_values, size);
   cudaMemcpy(dev_values, values, size, cudaMemcpyHostToDevice);
@@ -102,11 +101,6 @@ void bitonic_sort(float *values)
 
   using clock_type = std::chrono::high_resolution_clock;
   auto start = clock_type::now();
-  int stages = 0;
-  for (size_t tmp = NUM_VALS; tmp > 1; tmp >>= 1) ++stages;
-  int total_steps = stages * (stages + 1) / 2;
-  int completed_steps = 0;
-  int last_percent = -1;
 
   unsigned int j, k;
   /* Major step */
@@ -114,40 +108,48 @@ void bitonic_sort(float *values)
     /* Minor step */
     for (j=k>>1; j>0; j=j>>1) {
       bitonic_sort_step<<<blocks, threads>>>(dev_values, j, k);
-      cudaDeviceSynchronize();
-      completed_steps++;
-      auto now = clock_type::now();
-      double elapsed = std::chrono::duration<double>(now - start).count();
-      int percent = completed_steps * 100 / total_steps;
-      while (percent > last_percent) {
-        double est_total = elapsed / completed_steps * total_steps;
-        double remaining = est_total - elapsed;
-        last_percent++;
-        printf("Progress: %d%% done, ETA %.2f s\n", last_percent, remaining);
-      }
     }
   }
 
+  cudaDeviceSynchronize();
   auto t2 = clock_type::now();
   cudaError_t error = cudaGetLastError();
   if (error != cudaSuccess) {
     printf("CUDA error: %s\n", cudaGetErrorString(error));
     exit(-1);
   }
-  std::chrono::duration<double, std::milli> ms = t2 - start;
-  printf("Kernel wall time elapsed: %g ms\n", ms.count());
+  if (timing) {
+    std::chrono::duration<double, std::milli> ms = t2 - start;
+    printf("Kernel wall time elapsed: %g ms\n", ms.count());
+  }
 
   cudaMemcpy(values, dev_values, size, cudaMemcpyDeviceToHost);
   cudaFree(dev_values);
 }
 
+bool verify_unique(uint32_t *arr, int length) {
+  for (int i = 0; i < length; ++i) {
+    arr[i] = (uint32_t)(length - 1 - i);
+  }
+  bitonic_sort(arr, false);
+  for (int i = 0; i < length; ++i) {
+    if (arr[i] != (uint32_t)i) {
+      printf("Value mismatch at index %d\n", i);
+      return false;
+    }
+  }
+  printf("All values present exactly once\n");
+  return true;
+}
+
 int main(void)
 {
-  float *values = (float*) malloc(NUM_VALS * sizeof(float));
+  uint32_t *values = (uint32_t*) malloc(NUM_VALS * sizeof(uint32_t));
   array_fill(values, NUM_VALS);
 
-  bitonic_sort(values);
+  bitonic_sort(values, true);
   verify_sorted(values, NUM_VALS);
+  verify_unique(values, NUM_VALS);
 
   free(values);
   return 0;
