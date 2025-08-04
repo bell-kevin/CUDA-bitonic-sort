@@ -450,34 +450,1256 @@ chart with overall speedup from the baseline. Compare times on 2^30 total array 
 approaches you made beyond these instructions. For example, for Modification #3, I want to know how many pairs of
 indexes each CUDA thread operates on.
 
+Here's what I've got so far for my output:
 
+kb24850@morpheus:~$ cd cs6850-sum25
 
-### Sample execution
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 bitonic_sort.cu -o bitonic_sort.x
 
-The programs can be compiled and executed on a CUDA‑capable machine as shown
-below.  Exact timings will vary based on hardware and problem size.
+kb24850@morpheus:~/cs6850-sum25$ ./bitonic_sort.x
 
-```bash
-$ nvcc -arch=sm_86 bitonic_sort.cu -o bitonic_sort.x
-$ ./bitonic_sort.x
-Kernel wall time elapsed: <time> ms
+Progress: 0% done, ETA 4.25 s
+
+Progress: 1% done, ETA 4.23 s
+
+Progress: 2% done, ETA 4.18 s
+
+Progress: 3% done, ETA 4.09 s
+
+Progress: 4% done, ETA 3.97 s
+
+Progress: 5% done, ETA 3.87 s
+
+Progress: 6% done, ETA 3.85 s
+
+Progress: 7% done, ETA 3.74 s
+
+Progress: 8% done, ETA 3.68 s
+
+Progress: 9% done, ETA 3.62 s
+
+Progress: 10% done, ETA 3.56 s
+
+Progress: 11% done, ETA 3.49 s
+
+Progress: 12% done, ETA 3.46 s
+
+Progress: 13% done, ETA 3.38 s
+
+Progress: 14% done, ETA 3.35 s
+
+Progress: 15% done, ETA 3.28 s
+
+Progress: 16% done, ETA 3.23 s
+
+Progress: 17% done, ETA 3.19 s
+
+Progress: 18% done, ETA 3.13 s
+
+Progress: 19% done, ETA 3.09 s
+
+Progress: 20% done, ETA 3.05 s
+
+Progress: 21% done, ETA 2.99 s
+
+Progress: 22% done, ETA 2.95 s
+
+Progress: 23% done, ETA 2.92 s
+
+Progress: 24% done, ETA 2.86 s
+
+Progress: 25% done, ETA 2.81 s
+
+Progress: 26% done, ETA 2.79 s
+
+Progress: 27% done, ETA 2.73 s
+
+Progress: 28% done, ETA 2.68 s
+
+Progress: 29% done, ETA 2.66 s
+
+Progress: 30% done, ETA 2.61 s
+
+Progress: 31% done, ETA 2.56 s
+
+Progress: 32% done, ETA 2.52 s
+
+Progress: 33% done, ETA 2.49 s
+
+Progress: 34% done, ETA 2.44 s
+
+Progress: 35% done, ETA 2.40 s
+
+Progress: 36% done, ETA 2.36 s
+
+Progress: 37% done, ETA 2.32 s
+
+Progress: 38% done, ETA 2.28 s
+
+Progress: 39% done, ETA 2.24 s
+
+Progress: 40% done, ETA 2.20 s
+
+Progress: 41% done, ETA 2.17 s
+
+Progress: 42% done, ETA 2.12 s
+
+Progress: 43% done, ETA 2.09 s
+
+Progress: 44% done, ETA 2.04 s
+
+Progress: 45% done, ETA 2.01 s
+
+Progress: 46% done, ETA 1.97 s
+
+Progress: 47% done, ETA 1.93 s
+
+Progress: 48% done, ETA 1.88 s
+
+Progress: 49% done, ETA 1.85 s
+
+Progress: 50% done, ETA 1.82 s
+
+Progress: 51% done, ETA 1.77 s
+
+Progress: 52% done, ETA 1.74 s
+
+Progress: 53% done, ETA 1.70 s
+
+Progress: 54% done, ETA 1.66 s
+
+Progress: 55% done, ETA 1.63 s
+
+Progress: 56% done, ETA 1.59 s
+
+Progress: 57% done, ETA 1.54 s
+
+Progress: 58% done, ETA 1.51 s
+
+Progress: 59% done, ETA 1.48 s
+
+Progress: 60% done, ETA 1.44 s
+
+Progress: 61% done, ETA 1.40 s
+
+Progress: 62% done, ETA 1.36 s
+
+Progress: 63% done, ETA 1.33 s
+
+Progress: 64% done, ETA 1.29 s
+
+Progress: 65% done, ETA 1.25 s
+
+Progress: 66% done, ETA 1.22 s
+
+Progress: 67% done, ETA 1.18 s
+
+Progress: 68% done, ETA 1.14 s
+
+Progress: 69% done, ETA 1.11 s
+
+Progress: 70% done, ETA 1.07 s
+
+Progress: 71% done, ETA 1.03 s
+
+Progress: 72% done, ETA 1.00 s
+
+Progress: 73% done, ETA 0.96 s
+
+Progress: 74% done, ETA 0.92 s
+
+Progress: 75% done, ETA 0.89 s
+
+Progress: 76% done, ETA 0.85 s
+
+Progress: 77% done, ETA 0.81 s
+
+Progress: 78% done, ETA 0.78 s
+
+Progress: 79% done, ETA 0.74 s
+
+Progress: 80% done, ETA 0.71 s
+
+Progress: 81% done, ETA 0.67 s
+
+Progress: 82% done, ETA 0.64 s
+
+Progress: 83% done, ETA 0.60 s
+
+Progress: 84% done, ETA 0.56 s
+
+Progress: 85% done, ETA 0.53 s
+
+Progress: 86% done, ETA 0.50 s
+
+Progress: 87% done, ETA 0.46 s
+
+Progress: 88% done, ETA 0.42 s
+
+Progress: 89% done, ETA 0.39 s
+
+Progress: 90% done, ETA 0.35 s
+
+Progress: 91% done, ETA 0.31 s
+
+Progress: 92% done, ETA 0.28 s
+
+Progress: 93% done, ETA 0.24 s
+
+Progress: 94% done, ETA 0.20 s
+
+Progress: 95% done, ETA 0.17 s
+
+Progress: 96% done, ETA 0.14 s
+
+Progress: 97% done, ETA 0.10 s
+
+Progress: 98% done, ETA 0.07 s
+
+Progress: 99% done, ETA 0.03 s
+
+Progress: 100% done, ETA 0.00 s
+
+Kernel wall time elapsed: 3506.85 ms
+
 Array sorted correctly
 
-$ nvcc -arch=sm_86 mod1.cu -o mod1.x
-$ ./mod1.x
-Kernel wall time elapsed: <time> ms
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod1.cu -o mod1.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./mod1.x
+
+Progress: 0% done, ETA 4.25 s
+
+Progress: 1% done, ETA 4.24 s
+
+Progress: 2% done, ETA 4.19 s
+
+Progress: 3% done, ETA 4.10 s
+
+Progress: 4% done, ETA 3.98 s
+
+Progress: 5% done, ETA 3.88 s
+
+Progress: 6% done, ETA 3.86 s
+
+Progress: 7% done, ETA 3.75 s
+
+Progress: 8% done, ETA 3.68 s
+
+Progress: 9% done, ETA 3.62 s
+
+Progress: 10% done, ETA 3.57 s
+
+Progress: 11% done, ETA 3.50 s
+
+Progress: 12% done, ETA 3.47 s
+
+Progress: 13% done, ETA 3.38 s
+
+Progress: 14% done, ETA 3.36 s
+
+Progress: 15% done, ETA 3.29 s
+
+Progress: 16% done, ETA 3.24 s
+
+Progress: 17% done, ETA 3.19 s
+
+Progress: 18% done, ETA 3.14 s
+
+Progress: 19% done, ETA 3.10 s
+
+Progress: 20% done, ETA 3.06 s
+
+Progress: 21% done, ETA 3.00 s
+
+Progress: 22% done, ETA 2.96 s
+
+Progress: 23% done, ETA 2.92 s
+
+Progress: 24% done, ETA 2.86 s
+
+Progress: 25% done, ETA 2.82 s
+
+Progress: 26% done, ETA 2.79 s
+
+Progress: 27% done, ETA 2.74 s
+
+Progress: 28% done, ETA 2.69 s
+
+Progress: 29% done, ETA 2.66 s
+
+Progress: 30% done, ETA 2.61 s
+
+Progress: 31% done, ETA 2.56 s
+
+Progress: 32% done, ETA 2.53 s
+
+Progress: 33% done, ETA 2.49 s
+
+Progress: 34% done, ETA 2.44 s
+
+Progress: 35% done, ETA 2.40 s
+
+Progress: 36% done, ETA 2.36 s
+
+Progress: 37% done, ETA 2.33 s
+
+Progress: 38% done, ETA 2.29 s
+
+Progress: 39% done, ETA 2.24 s
+
+Progress: 40% done, ETA 2.21 s
+
+Progress: 41% done, ETA 2.17 s
+
+Progress: 42% done, ETA 2.13 s
+
+Progress: 43% done, ETA 2.09 s
+
+Progress: 44% done, ETA 2.05 s
+
+Progress: 45% done, ETA 2.01 s
+
+Progress: 46% done, ETA 1.98 s
+
+Progress: 47% done, ETA 1.93 s
+
+Progress: 48% done, ETA 1.89 s
+
+Progress: 49% done, ETA 1.86 s
+
+Progress: 50% done, ETA 1.82 s
+
+Progress: 51% done, ETA 1.78 s
+
+Progress: 52% done, ETA 1.74 s
+
+Progress: 53% done, ETA 1.70 s
+
+Progress: 54% done, ETA 1.66 s
+
+Progress: 55% done, ETA 1.63 s
+
+Progress: 56% done, ETA 1.59 s
+
+Progress: 57% done, ETA 1.55 s
+
+Progress: 58% done, ETA 1.52 s
+
+Progress: 59% done, ETA 1.48 s
+
+Progress: 60% done, ETA 1.45 s
+
+Progress: 61% done, ETA 1.40 s
+
+Progress: 62% done, ETA 1.36 s
+
+Progress: 63% done, ETA 1.33 s
+
+Progress: 64% done, ETA 1.29 s
+
+Progress: 65% done, ETA 1.25 s
+
+Progress: 66% done, ETA 1.22 s
+
+Progress: 67% done, ETA 1.18 s
+
+Progress: 68% done, ETA 1.14 s
+
+Progress: 69% done, ETA 1.11 s
+
+Progress: 70% done, ETA 1.07 s
+
+Progress: 71% done, ETA 1.03 s
+
+Progress: 72% done, ETA 1.00 s
+
+Progress: 73% done, ETA 0.96 s
+
+Progress: 74% done, ETA 0.92 s
+
+Progress: 75% done, ETA 0.89 s
+
+Progress: 76% done, ETA 0.85 s
+
+Progress: 77% done, ETA 0.81 s
+
+Progress: 78% done, ETA 0.78 s
+
+Progress: 79% done, ETA 0.74 s
+
+Progress: 80% done, ETA 0.71 s
+
+Progress: 81% done, ETA 0.67 s
+
+Progress: 82% done, ETA 0.63 s
+
+Progress: 83% done, ETA 0.60 s
+
+Progress: 84% done, ETA 0.56 s
+
+Progress: 85% done, ETA 0.53 s
+
+Progress: 86% done, ETA 0.49 s
+
+Progress: 87% done, ETA 0.46 s
+
+Progress: 88% done, ETA 0.42 s
+
+Progress: 89% done, ETA 0.39 s
+
+Progress: 90% done, ETA 0.35 s
+
+Progress: 91% done, ETA 0.31 s
+
+Progress: 92% done, ETA 0.28 s
+
+Progress: 93% done, ETA 0.24 s
+
+Progress: 94% done, ETA 0.20 s
+
+Progress: 95% done, ETA 0.17 s
+
+Progress: 96% done, ETA 0.14 s
+
+Progress: 97% done, ETA 0.10 s
+
+Progress: 98% done, ETA 0.07 s
+
+Progress: 99% done, ETA 0.03 s
+
+Progress: 100% done, ETA 0.00 s
+
+Kernel wall time elapsed: 3500.08 ms
+
 Array sorted correctly
 
-$ nvcc -arch=sm_86 mod2.cu -o mod2.x
-$ ./mod2.x
-Kernel wall time elapsed: <time> ms
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod2.cu -o mod2.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./mod2.x
+
+Progress: 0% done, ETA 4.26 s
+
+Progress: 1% done, ETA 2.13 s
+
+Progress: 2% done, ETA 1.69 s
+
+Progress: 3% done, ETA 1.40 s
+
+Progress: 4% done, ETA 1.22 s
+
+Progress: 5% done, ETA 1.09 s
+
+Progress: 6% done, ETA 1.09 s
+
+Progress: 7% done, ETA 0.99 s
+
+Progress: 8% done, ETA 0.90 s
+
+Progress: 9% done, ETA 0.90 s
+
+Progress: 10% done, ETA 0.88 s
+
+Progress: 11% done, ETA 0.88 s
+
+Progress: 12% done, ETA 0.91 s
+
+Progress: 13% done, ETA 0.88 s
+
+Progress: 14% done, ETA 0.88 s
+
+Progress: 15% done, ETA 0.90 s
+
+Progress: 16% done, ETA 0.90 s
+
+Progress: 17% done, ETA 0.94 s
+
+Progress: 18% done, ETA 0.92 s
+
+Progress: 19% done, ETA 0.92 s
+
+Progress: 20% done, ETA 0.95 s
+
+Progress: 21% done, ETA 0.93 s
+
+Progress: 22% done, ETA 0.93 s
+
+Progress: 23% done, ETA 0.96 s
+
+Progress: 24% done, ETA 0.94 s
+
+Progress: 25% done, ETA 0.94 s
+
+Progress: 26% done, ETA 0.95 s
+
+Progress: 27% done, ETA 0.99 s
+
+Progress: 28% done, ETA 0.94 s
+
+Progress: 29% done, ETA 0.94 s
+
+Progress: 30% done, ETA 0.97 s
+
+Progress: 31% done, ETA 0.94 s
+
+Progress: 32% done, ETA 0.94 s
+
+Progress: 33% done, ETA 0.94 s
+
+Progress: 34% done, ETA 0.97 s
+
+Progress: 35% done, ETA 0.92 s
+
+Progress: 36% done, ETA 0.92 s
+
+Progress: 37% done, ETA 0.93 s
+
+Progress: 38% done, ETA 0.94 s
+
+Progress: 39% done, ETA 0.90 s
+
+Progress: 40% done, ETA 0.90 s
+
+Progress: 41% done, ETA 0.90 s
+
+Progress: 42% done, ETA 0.91 s
+
+Progress: 43% done, ETA 0.91 s
+
+Progress: 44% done, ETA 0.86 s
+
+Progress: 45% done, ETA 0.86 s
+
+Progress: 46% done, ETA 0.87 s
+
+Progress: 47% done, ETA 0.87 s
+
+Progress: 48% done, ETA 0.82 s
+
+Progress: 49% done, ETA 0.82 s
+
+Progress: 50% done, ETA 0.82 s
+
+Progress: 51% done, ETA 0.82 s
+
+Progress: 52% done, ETA 0.82 s
+
+Progress: 53% done, ETA 0.76 s
+
+Progress: 54% done, ETA 0.76 s
+
+Progress: 55% done, ETA 0.76 s
+
+Progress: 56% done, ETA 0.76 s
+
+Progress: 57% done, ETA 0.75 s
+
+Progress: 58% done, ETA 0.70 s
+
+Progress: 59% done, ETA 0.70 s
+
+Progress: 60% done, ETA 0.70 s
+
+Progress: 61% done, ETA 0.69 s
+
+Progress: 62% done, ETA 0.68 s
+
+Progress: 63% done, ETA 0.63 s
+
+Progress: 64% done, ETA 0.63 s
+
+Progress: 65% done, ETA 0.62 s
+
+Progress: 66% done, ETA 0.61 s
+
+Progress: 67% done, ETA 0.60 s
+
+Progress: 68% done, ETA 0.55 s
+
+Progress: 69% done, ETA 0.55 s
+
+Progress: 70% done, ETA 0.54 s
+
+Progress: 71% done, ETA 0.53 s
+
+Progress: 72% done, ETA 0.52 s
+
+Progress: 73% done, ETA 0.50 s
+
+Progress: 74% done, ETA 0.45 s
+
+Progress: 75% done, ETA 0.45 s
+
+Progress: 76% done, ETA 0.44 s
+
+Progress: 77% done, ETA 0.43 s
+
+Progress: 78% done, ETA 0.42 s
+
+Progress: 79% done, ETA 0.40 s
+
+Progress: 80% done, ETA 0.35 s
+
+Progress: 81% done, ETA 0.35 s
+
+Progress: 82% done, ETA 0.34 s
+
+Progress: 83% done, ETA 0.33 s
+
+Progress: 84% done, ETA 0.31 s
+
+Progress: 85% done, ETA 0.29 s
+
+Progress: 86% done, ETA 0.24 s
+
+Progress: 87% done, ETA 0.24 s
+
+Progress: 88% done, ETA 0.23 s
+
+Progress: 89% done, ETA 0.21 s
+
+Progress: 90% done, ETA 0.19 s
+
+Progress: 91% done, ETA 0.17 s
+
+Progress: 92% done, ETA 0.13 s
+
+Progress: 93% done, ETA 0.13 s
+
+Progress: 94% done, ETA 0.11 s
+
+Progress: 95% done, ETA 0.10 s
+
+Progress: 96% done, ETA 0.08 s
+
+Progress: 97% done, ETA 0.06 s
+
+Progress: 98% done, ETA 0.04 s
+
+Progress: 99% done, ETA 0.00 s
+
+Progress: 100% done, ETA 0.00 s
+
+Kernel wall time elapsed: 1979.59 ms
+
+Copy: 0% done, ETA 0.87 s
+
+Copy: 1% done, ETA 0.87 s
+
+Copy: 2% done, ETA 0.86 s
+
+Copy: 3% done, ETA 0.86 s
+
+Copy: 4% done, ETA 0.85 s
+
+Copy: 5% done, ETA 0.83 s
+
+Copy: 6% done, ETA 0.83 s
+
+Copy: 7% done, ETA 0.82 s
+
+Copy: 8% done, ETA 0.81 s
+
+Copy: 9% done, ETA 0.81 s
+
+Copy: 10% done, ETA 0.79 s
+
+Copy: 11% done, ETA 0.78 s
+
+Copy: 12% done, ETA 0.78 s
+
+Copy: 13% done, ETA 0.76 s
+
+Copy: 14% done, ETA 0.76 s
+
+Copy: 15% done, ETA 0.75 s
+
+Copy: 16% done, ETA 0.74 s
+
+Copy: 17% done, ETA 0.74 s
+
+Copy: 18% done, ETA 0.72 s
+
+Copy: 19% done, ETA 0.71 s
+
+Copy: 20% done, ETA 0.71 s
+
+Copy: 21% done, ETA 0.70 s
+
+Copy: 22% done, ETA 0.68 s
+
+Copy: 23% done, ETA 0.68 s
+
+Copy: 24% done, ETA 0.67 s
+
+Copy: 25% done, ETA 0.67 s
+
+Copy: 26% done, ETA 0.65 s
+
+Copy: 27% done, ETA 0.64 s
+
+Copy: 28% done, ETA 0.64 s
+
+Copy: 29% done, ETA 0.63 s
+
+Copy: 30% done, ETA 0.61 s
+
+Copy: 31% done, ETA 0.61 s
+
+Copy: 32% done, ETA 0.60 s
+
+Copy: 33% done, ETA 0.58 s
+
+Copy: 34% done, ETA 0.58 s
+
+Copy: 35% done, ETA 0.57 s
+
+Copy: 36% done, ETA 0.56 s
+
+Copy: 37% done, ETA 0.56 s
+
+Copy: 38% done, ETA 0.54 s
+
+Copy: 39% done, ETA 0.54 s
+
+Copy: 40% done, ETA 0.53 s
+
+Copy: 41% done, ETA 0.51 s
+
+Copy: 42% done, ETA 0.51 s
+
+Copy: 43% done, ETA 0.50 s
+
+Copy: 44% done, ETA 0.49 s
+
+Copy: 45% done, ETA 0.49 s
+
+Copy: 46% done, ETA 0.47 s
+
+Copy: 47% done, ETA 0.46 s
+
+Copy: 48% done, ETA 0.46 s
+
+Copy: 49% done, ETA 0.44 s
+
+Copy: 50% done, ETA 0.44 s
+
+Copy: 51% done, ETA 0.43 s
+
+Copy: 52% done, ETA 0.42 s
+
+Copy: 53% done, ETA 0.42 s
+
+Copy: 54% done, ETA 0.40 s
+
+Copy: 55% done, ETA 0.39 s
+
+Copy: 56% done, ETA 0.39 s
+
+Copy: 57% done, ETA 0.38 s
+
+Copy: 58% done, ETA 0.36 s
+
+Copy: 59% done, ETA 0.36 s
+
+Copy: 60% done, ETA 0.35 s
+
+Copy: 61% done, ETA 0.33 s
+
+Copy: 62% done, ETA 0.33 s
+
+Copy: 63% done, ETA 0.32 s
+
+Copy: 64% done, ETA 0.32 s
+
+Copy: 65% done, ETA 0.31 s
+
+Copy: 66% done, ETA 0.29 s
+
+Copy: 67% done, ETA 0.29 s
+
+Copy: 68% done, ETA 0.28 s
+
+Copy: 69% done, ETA 0.26 s
+
+Copy: 70% done, ETA 0.26 s
+
+Copy: 71% done, ETA 0.25 s
+
+Copy: 72% done, ETA 0.24 s
+
+Copy: 73% done, ETA 0.24 s
+
+Copy: 74% done, ETA 0.22 s
+
+Copy: 75% done, ETA 0.22 s
+
+Copy: 76% done, ETA 0.21 s
+
+Copy: 77% done, ETA 0.19 s
+
+Copy: 78% done, ETA 0.19 s
+
+Copy: 79% done, ETA 0.18 s
+
+Copy: 80% done, ETA 0.17 s
+
+Copy: 81% done, ETA 0.17 s
+
+Copy: 82% done, ETA 0.15 s
+
+Copy: 83% done, ETA 0.14 s
+
+Copy: 84% done, ETA 0.14 s
+
+Copy: 85% done, ETA 0.13 s
+
+Copy: 86% done, ETA 0.11 s
+
+Copy: 87% done, ETA 0.11 s
+
+Copy: 88% done, ETA 0.10 s
+
+Copy: 89% done, ETA 0.10 s
+
+Copy: 90% done, ETA 0.08 s
+
+Copy: 91% done, ETA 0.07 s
+
+Copy: 92% done, ETA 0.07 s
+
+Copy: 93% done, ETA 0.06 s
+
+Copy: 94% done, ETA 0.04 s
+
+Copy: 95% done, ETA 0.04 s
+
+Copy: 96% done, ETA 0.03 s
+
+Copy: 97% done, ETA 0.01 s
+
+Copy: 98% done, ETA 0.01 s
+
+Copy: 99% done, ETA 0.00 s
+
+Copy: 100% done, ETA 0.00 s
+
+Verify: 0% done, ETA 149.25 s
+
+Verify: 1% done, ETA 10.60 s
+
+Verify: 2% done, ETA 10.68 s
+
+Verify: 3% done, ETA 10.63 s
+
+Verify: 4% done, ETA 10.54 s
+
+Verify: 5% done, ETA 10.45 s
+
+Verify: 6% done, ETA 10.35 s
+
+Verify: 7% done, ETA 10.11 s
+
+Verify: 8% done, ETA 9.88 s
+
+Verify: 9% done, ETA 9.67 s
+
+Verify: 10% done, ETA 9.48 s
+
+Verify: 11% done, ETA 9.31 s
+
+Verify: 12% done, ETA 9.15 s
+
+Verify: 13% done, ETA 9.01 s
+
+Verify: 14% done, ETA 8.88 s
+
+Verify: 15% done, ETA 8.76 s
+
+Verify: 16% done, ETA 8.62 s
+
+Verify: 17% done, ETA 8.49 s
+
+Verify: 18% done, ETA 8.37 s
+
+Verify: 19% done, ETA 8.25 s
+
+Verify: 20% done, ETA 8.13 s
+
+Verify: 21% done, ETA 8.01 s
+
+Verify: 22% done, ETA 7.91 s
+
+Verify: 23% done, ETA 7.80 s
+
+Verify: 24% done, ETA 7.69 s
+
+Verify: 25% done, ETA 7.58 s
+
+Verify: 26% done, ETA 7.47 s
+
+Verify: 27% done, ETA 7.36 s
+
+Verify: 28% done, ETA 7.25 s
+
+Verify: 29% done, ETA 7.14 s
+
+Verify: 30% done, ETA 7.03 s
+
+Verify: 31% done, ETA 6.92 s
+
+Verify: 32% done, ETA 6.82 s
+
+Verify: 33% done, ETA 6.72 s
+
+Verify: 34% done, ETA 6.61 s
+
+Verify: 35% done, ETA 6.50 s
+
+Verify: 36% done, ETA 6.40 s
+
+Verify: 37% done, ETA 6.29 s
+
+Verify: 38% done, ETA 6.19 s
+
+Verify: 39% done, ETA 6.09 s
+
+Verify: 40% done, ETA 5.98 s
+
+Verify: 41% done, ETA 5.88 s
+
+Verify: 42% done, ETA 5.78 s
+
+Verify: 43% done, ETA 5.67 s
+
+Verify: 44% done, ETA 5.58 s
+
+Verify: 45% done, ETA 5.48 s
+
+Verify: 46% done, ETA 5.37 s
+
+Verify: 47% done, ETA 5.27 s
+
+Verify: 48% done, ETA 5.17 s
+
+Verify: 49% done, ETA 5.07 s
+
+Verify: 50% done, ETA 4.97 s
+
+Verify: 51% done, ETA 4.87 s
+
+Verify: 52% done, ETA 4.76 s
+
+Verify: 53% done, ETA 4.66 s
+
+Verify: 54% done, ETA 4.56 s
+
+Verify: 55% done, ETA 4.46 s
+
+Verify: 56% done, ETA 4.36 s
+
+Verify: 57% done, ETA 4.26 s
+
+Verify: 58% done, ETA 4.16 s
+
+Verify: 59% done, ETA 4.06 s
+
+Verify: 60% done, ETA 3.96 s
+
+Verify: 61% done, ETA 3.86 s
+
+Verify: 62% done, ETA 3.76 s
+
+Verify: 63% done, ETA 3.66 s
+
+Verify: 64% done, ETA 3.56 s
+
+Verify: 65% done, ETA 3.46 s
+
+Verify: 66% done, ETA 3.36 s
+
+Verify: 67% done, ETA 3.26 s
+
+Verify: 68% done, ETA 3.17 s
+
+Verify: 69% done, ETA 3.07 s
+
+Verify: 70% done, ETA 2.97 s
+
+Verify: 71% done, ETA 2.87 s
+
+Verify: 72% done, ETA 2.77 s
+
+Verify: 73% done, ETA 2.67 s
+
+Verify: 74% done, ETA 2.57 s
+
+Verify: 75% done, ETA 2.47 s
+
+Verify: 76% done, ETA 2.37 s
+
+Verify: 77% done, ETA 2.27 s
+
+Verify: 78% done, ETA 2.17 s
+
+Verify: 79% done, ETA 2.07 s
+
+Verify: 80% done, ETA 1.97 s
+
+Verify: 81% done, ETA 1.88 s
+
+Verify: 82% done, ETA 1.78 s
+
+Verify: 83% done, ETA 1.68 s
+
+Verify: 84% done, ETA 1.58 s
+
+Verify: 85% done, ETA 1.48 s
+
+Verify: 86% done, ETA 1.38 s
+
+Verify: 87% done, ETA 1.28 s
+
+Verify: 88% done, ETA 1.18 s
+
+Verify: 89% done, ETA 1.09 s
+
+Verify: 90% done, ETA 0.99 s
+
+Verify: 91% done, ETA 0.89 s
+
+Verify: 92% done, ETA 0.79 s
+
+Verify: 93% done, ETA 0.69 s
+
+Verify: 94% done, ETA 0.59 s
+
+Verify: 95% done, ETA 0.49 s
+
+Verify: 96% done, ETA 0.39 s
+
+Verify: 97% done, ETA 0.30 s
+
+Verify: 98% done, ETA 0.20 s
+
+Verify: 99% done, ETA 0.10 s
+
+Verify: 100% done, ETA 0.00 s
+
 Array sorted correctly
 
-$ nvcc -arch=sm_86 mod3.cu -o mod3.x
-$ ./mod3.x
-Kernel wall time elapsed: <time> ms
+kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod3.cu -o mod3.x
+
+kb24850@morpheus:~/cs6850-sum25$ ./mod3.x
+
+Progress: 0% done, ETA 4.27 s
+
+Progress: 1% done, ETA 4.26 s
+
+Progress: 2% done, ETA 4.20 s
+
+Progress: 3% done, ETA 4.12 s
+
+Progress: 4% done, ETA 4.00 s
+
+Progress: 5% done, ETA 3.90 s
+
+Progress: 6% done, ETA 3.88 s
+
+Progress: 7% done, ETA 3.77 s
+
+Progress: 8% done, ETA 3.70 s
+
+Progress: 9% done, ETA 3.65 s
+
+Progress: 10% done, ETA 3.59 s
+
+Progress: 11% done, ETA 3.52 s
+
+Progress: 12% done, ETA 3.49 s
+
+Progress: 13% done, ETA 3.41 s
+
+Progress: 14% done, ETA 3.38 s
+
+Progress: 15% done, ETA 3.31 s
+
+Progress: 16% done, ETA 3.26 s
+
+Progress: 17% done, ETA 3.21 s
+
+Progress: 18% done, ETA 3.16 s
+
+Progress: 19% done, ETA 3.12 s
+
+Progress: 20% done, ETA 3.08 s
+
+Progress: 21% done, ETA 3.02 s
+
+Progress: 22% done, ETA 2.98 s
+
+Progress: 23% done, ETA 2.94 s
+
+Progress: 24% done, ETA 2.88 s
+
+Progress: 25% done, ETA 2.84 s
+
+Progress: 26% done, ETA 2.81 s
+
+Progress: 27% done, ETA 2.76 s
+
+Progress: 28% done, ETA 2.71 s
+
+Progress: 29% done, ETA 2.68 s
+
+Progress: 30% done, ETA 2.63 s
+
+Progress: 31% done, ETA 2.58 s
+
+Progress: 32% done, ETA 2.54 s
+
+Progress: 33% done, ETA 2.51 s
+
+Progress: 34% done, ETA 2.46 s
+
+Progress: 35% done, ETA 2.42 s
+
+Progress: 36% done, ETA 2.38 s
+
+Progress: 37% done, ETA 2.34 s
+
+Progress: 38% done, ETA 2.30 s
+
+Progress: 39% done, ETA 2.26 s
+
+Progress: 40% done, ETA 2.22 s
+
+Progress: 41% done, ETA 2.19 s
+
+Progress: 42% done, ETA 2.14 s
+
+Progress: 43% done, ETA 2.10 s
+
+Progress: 44% done, ETA 2.06 s
+
+Progress: 45% done, ETA 2.03 s
+
+Progress: 46% done, ETA 1.99 s
+
+Progress: 47% done, ETA 1.95 s
+
+Progress: 48% done, ETA 1.90 s
+
+Progress: 49% done, ETA 1.87 s
+
+Progress: 50% done, ETA 1.83 s
+
+Progress: 51% done, ETA 1.79 s
+
+Progress: 52% done, ETA 1.75 s
+
+Progress: 53% done, ETA 1.71 s
+
+Progress: 54% done, ETA 1.68 s
+
+Progress: 55% done, ETA 1.64 s
+
+Progress: 56% done, ETA 1.60 s
+
+Progress: 57% done, ETA 1.56 s
+
+Progress: 58% done, ETA 1.53 s
+
+Progress: 59% done, ETA 1.49 s
+
+Progress: 60% done, ETA 1.46 s
+
+Progress: 61% done, ETA 1.41 s
+
+Progress: 62% done, ETA 1.37 s
+
+Progress: 63% done, ETA 1.34 s
+
+Progress: 64% done, ETA 1.30 s
+
+Progress: 65% done, ETA 1.26 s
+
+Progress: 66% done, ETA 1.23 s
+
+Progress: 67% done, ETA 1.19 s
+
+Progress: 68% done, ETA 1.15 s
+
+Progress: 69% done, ETA 1.12 s
+
+Progress: 70% done, ETA 1.08 s
+
+Progress: 71% done, ETA 1.04 s
+
+Progress: 72% done, ETA 1.01 s
+
+Progress: 73% done, ETA 0.97 s
+
+Progress: 74% done, ETA 0.93 s
+
+Progress: 75% done, ETA 0.90 s
+
+Progress: 76% done, ETA 0.86 s
+
+Progress: 77% done, ETA 0.82 s
+
+Progress: 78% done, ETA 0.79 s
+
+Progress: 79% done, ETA 0.75 s
+
+Progress: 80% done, ETA 0.72 s
+
+Progress: 81% done, ETA 0.68 s
+
+Progress: 82% done, ETA 0.64 s
+
+Progress: 83% done, ETA 0.61 s
+
+Progress: 84% done, ETA 0.57 s
+
+Progress: 85% done, ETA 0.53 s
+
+Progress: 86% done, ETA 0.50 s
+
+Progress: 87% done, ETA 0.46 s
+
+Progress: 88% done, ETA 0.42 s
+
+Progress: 89% done, ETA 0.39 s
+
+Progress: 90% done, ETA 0.35 s
+
+Progress: 91% done, ETA 0.31 s
+
+Progress: 92% done, ETA 0.28 s
+
+Progress: 93% done, ETA 0.24 s
+
+Progress: 94% done, ETA 0.21 s
+
+Progress: 95% done, ETA 0.18 s
+
+Progress: 96% done, ETA 0.14 s
+
+Progress: 97% done, ETA 0.10 s
+
+Progress: 98% done, ETA 0.07 s
+
+Progress: 99% done, ETA 0.03 s
+
+Progress: 100% done, ETA 0.00 s
+
+Kernel wall time elapsed: 3527.69 ms
+
 Array sorted correctly
-```
+
+kb24850@morpheus:~/cs6850-sum25$ 
+
 
 
 
