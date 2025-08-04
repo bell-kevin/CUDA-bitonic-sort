@@ -95,14 +95,19 @@ __global__ void bitonic_step(uint32_t *dev_values, unsigned int j, unsigned int 
 __global__ void bitonic_block(uint32_t *dev_values, unsigned int j_start,
                               unsigned int j_end, unsigned int k)
 {
-  unsigned int tid = threadIdx.x + blockDim.x * blockIdx.x;
-  unsigned int totalThreads = blockDim.x * gridDim.x;
+  // Each block is responsible for a contiguous range of pairs so that all
+  // comparisons for a given j value stay within the block.  This allows
+  // __syncthreads() to provide the necessary synchronization without
+  // requiring communication across blocks.
+  unsigned int base = blockIdx.x * blockDim.x * PAIRS_PER_THREAD;
+  unsigned int tid  = threadIdx.x;
 
   for (unsigned int j = j_start; j >= j_end; j >>= 1) {
     unsigned int groupSize = j << 1;
 
     for (int p = 0; p < PAIRS_PER_THREAD; ++p) {
-      unsigned int id = tid + p * totalThreads;
+      // Global pair index handled by this thread for the current iteration
+      unsigned int id = base + tid + p * blockDim.x;
       if (id >= NUM_VALS / 2)
         continue;
 
