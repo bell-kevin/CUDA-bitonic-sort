@@ -452,45 +452,32 @@ indexes each CUDA thread operates on.
 
 
 
-Here's my output so far:
+### Sample execution
 
-kb24850@morpheus:~$ cd cs6850-sum25
+The programs can be compiled and executed on a CUDA‑capable machine as shown
+below.  Exact timings will vary based on hardware and problem size.
 
-kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 bitonic_sort.cu -o bitonic_sort.x
-
-kb24850@morpheus:~/cs6850-sum25$ ./bitonic_sort.x
-
-Kernel wall time elapsed: 12.8518 ms
-
+```bash
+$ nvcc -arch=sm_86 bitonic_sort.cu -o bitonic_sort.x
+$ ./bitonic_sort.x
+Kernel wall time elapsed: <time> ms
 Array sorted correctly
 
-kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod1.cu -o mod1.x
-
-kb24850@morpheus:~/cs6850-sum25$ ./mod1.x
-
-Kernel wall time elapsed: 0.934024 ms
-
+$ nvcc -arch=sm_86 mod1.cu -o mod1.x
+$ ./mod1.x
+Kernel wall time elapsed: <time> ms
 Array sorted correctly
 
-kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod2.cu -o mod2.x
-
-kb24850@morpheus:~/cs6850-sum25$ ./mod2.x
-
-Kernel wall time elapsed: 0.681902 ms
-
+$ nvcc -arch=sm_86 mod2.cu -o mod2.x
+$ ./mod2.x
+Kernel wall time elapsed: <time> ms
 Array sorted correctly
 
-kb24850@morpheus:~/cs6850-sum25$ /usr/local/cuda-12/bin/nvcc -arch=sm_86 mod3.cu -o mod3.x
-
-kb24850@morpheus:~/cs6850-sum25$ ./mod3.x
-
-Kernel wall time elapsed: 0.909789 ms
-
+$ nvcc -arch=sm_86 mod3.cu -o mod3.x
+$ ./mod3.x
+Kernel wall time elapsed: <time> ms
 Array sorted correctly
-
-kb24850@morpheus:~/cs6850-sum25$ 
-
-this output is outdated. i need to update the morpheus code and re-run the output
+```
 
 
 
