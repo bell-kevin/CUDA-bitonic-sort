@@ -54,7 +54,7 @@ bool verify_sorted(const float *arr, int length) {
   return true;
 }
 
-__global__ void bitonic_sort_step(float *dev_values, int j, int k)
+__global__ void bitonic_sort_step(float *dev_values, unsigned int j, unsigned int k)
 {
   unsigned int i, ixj; /* Sorting partners: i and ixj */
   i = threadIdx.x + blockDim.x * blockIdx.x;
@@ -105,7 +105,7 @@ void bitonic_sort(float *values)
   int completed_steps = 0;
   int last_percent = -1;
 
-  int j, k;
+  unsigned int j, k;
   /* Major step */
   for (k = 2; k <= NUM_VALS; k <<= 1) {
     /* Minor step */

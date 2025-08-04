@@ -93,7 +93,7 @@ bool verify_sorted(const float *arr, size_t length) {
 }
 
 /* Single step kernel used when cross-block synchronization is required */
-__global__ void bitonic_step(float *dev_values, int j, int k)
+__global__ void bitonic_step(float *dev_values, unsigned int j, unsigned int k)
 {
   unsigned int tid = threadIdx.x + blockDim.x * blockIdx.x;
 
@@ -117,11 +117,11 @@ __global__ void bitonic_step(float *dev_values, int j, int k)
  * range of j/set values with __syncthreads() so that multiple minor steps are
  * executed per launch when data is contained within a block.
  */
-__global__ void bitonic_block(float *dev_values, int j_start, int j_end, int k)
+__global__ void bitonic_block(float *dev_values, unsigned int j_start, unsigned int j_end, unsigned int k)
 {
   unsigned int tid = threadIdx.x + blockDim.x * blockIdx.x;
 
-  for (int j = j_start; j >= j_end; j >>= 1) {
+  for (unsigned int j = j_start; j >= j_end; j >>= 1) {
     unsigned int groupSize = j << 1;
     unsigned int index1   = (tid / j) * groupSize + (tid % j);
     unsigned int index2   = index1 + j;
@@ -162,10 +162,10 @@ void bitonic_sort(float *values)
   int completed_steps = 0;
   int last_percent = -1;
 
-  int k;
+  unsigned int k;
   /* Major step */
   for (k = 2; k <= NUM_VALS; k <<= 1) {
-    int j = k >> 1;
+    unsigned int j = k >> 1;
 
     /* First handle j values that require multiple blocks and thus cannot be
        combined inside a single kernel */
@@ -187,7 +187,7 @@ void bitonic_sort(float *values)
 
     /* Remaining j values are computed inside one kernel launch */
     int steps_in_block = 0;
-    int tmp_j = j;
+    unsigned int tmp_j = j;
     while (tmp_j >= 1) {
       steps_in_block++;
       tmp_j >>= 1;
