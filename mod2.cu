@@ -41,53 +41,13 @@ void array_fill(float *arr, int length)
   }
 }
 
-void copy_to_host_progress(float *host, const float *dev, size_t count) {
-  size_t total_bytes = count * sizeof(float);
-  const size_t chunk_bytes = 1 << 26; // 64MB
-  size_t copied = 0;
-  using clock_type = std::chrono::high_resolution_clock;
-  auto start = clock_type::now();
-  int last_percent = -1;
-  while (copied < total_bytes) {
-    size_t this_copy = chunk_bytes;
-    if (this_copy > total_bytes - copied) {
-      this_copy = total_bytes - copied;
-    }
-    size_t offset = copied / sizeof(float);
-    cudaMemcpy(host + offset, dev + offset, this_copy, cudaMemcpyDeviceToHost);
-    copied += this_copy;
-    int percent = (int)(copied * 100 / total_bytes);
-    while (percent > last_percent) {
-      auto now = clock_type::now();
-      double elapsed = std::chrono::duration<double>(now - start).count();
-      double est_total = elapsed / copied * total_bytes;
-      double remaining = est_total - elapsed;
-      last_percent++;
-      printf("Copy: %d%% done, ETA %.2f s\n", last_percent, remaining);
-    }
-  }
-}
-
 bool verify_sorted(const float *arr, size_t length) {
-  using clock_type = std::chrono::high_resolution_clock;
-  auto start = clock_type::now();
-  int last_percent = -1;
   for (size_t i = 0; i < length - 1; ++i) {
     if (arr[i] > arr[i + 1]) {
       printf("Sort error at indexes %zu and %zu\n", i, i + 1);
       return false;
     }
-    int percent = (int)(((i + 1) * 100) / length);
-    while (percent > last_percent) {
-      auto now = clock_type::now();
-      double elapsed = std::chrono::duration<double>(now - start).count();
-      double est_total = elapsed / (i + 1) * length;
-      double remaining = est_total - elapsed;
-      last_percent++;
-      printf("Verify: %d%% done, ETA %.2f s\n", last_percent, remaining);
-    }
   }
-  printf("Verify: 100%% done, ETA 0.00 s\n");
   printf("Array sorted correctly\n");
   return true;
 }
@@ -156,11 +116,6 @@ void bitonic_sort(float *values)
 
   using clock_type = std::chrono::high_resolution_clock;
   auto start = clock_type::now();
-  int stages = 0;
-  for (size_t tmp = NUM_VALS; tmp > 1; tmp >>= 1) ++stages;
-  int total_steps = stages * (stages + 1) / 2;
-  int completed_steps = 0;
-  int last_percent = -1;
 
   unsigned int k;
   /* Major step */
@@ -171,41 +126,14 @@ void bitonic_sort(float *values)
        combined inside a single kernel */
     while (j > THREADS) {
       bitonic_step<<<blocks, threads>>>(dev_values, j, k);
-      cudaDeviceSynchronize();
-      completed_steps++;
-      auto now = clock_type::now();
-      double elapsed = std::chrono::duration<double>(now - start).count();
-      int percent = completed_steps * 100 / total_steps;
-      while (percent > last_percent) {
-        double est_total = elapsed / completed_steps * total_steps;
-        double remaining = est_total - elapsed;
-        last_percent++;
-        printf("Progress: %d%% done, ETA %.2f s\n", last_percent, remaining);
-      }
       j >>= 1;
     }
 
     /* Remaining j values are computed inside one kernel launch */
-    int steps_in_block = 0;
-    unsigned int tmp_j = j;
-    while (tmp_j >= 1) {
-      steps_in_block++;
-      tmp_j >>= 1;
-    }
     bitonic_block<<<blocks, threads>>>(dev_values, j, 1, k);
-    cudaDeviceSynchronize();
-    completed_steps += steps_in_block;
-    auto now = clock_type::now();
-    double elapsed = std::chrono::duration<double>(now - start).count();
-    int percent = completed_steps * 100 / total_steps;
-    while (percent > last_percent) {
-      double est_total = elapsed / completed_steps * total_steps;
-      double remaining = est_total - elapsed;
-      last_percent++;
-      printf("Progress: %d%% done, ETA %.2f s\n", last_percent, remaining);
-    }
   }
 
+  cudaDeviceSynchronize();
   auto t2 = clock_type::now();
   cudaError_t error = cudaGetLastError();
   if (error != cudaSuccess) {
@@ -215,7 +143,7 @@ void bitonic_sort(float *values)
   std::chrono::duration<double, std::milli> ms = t2 - start;
   printf("Kernel wall time elapsed: %g ms\n", ms.count());
 
-  copy_to_host_progress(values, dev_values, NUM_VALS);
+  cudaMemcpy(values, dev_values, size, cudaMemcpyDeviceToHost);
   cudaFree(dev_values);
 }
 
