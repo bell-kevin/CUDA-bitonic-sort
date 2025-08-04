@@ -69,7 +69,7 @@ __global__ void bitonic_step(uint32_t *dev_values, unsigned int j, unsigned int 
     unsigned int id = tid + p * blockDim.x * gridDim.x;
 
     if (id >= NUM_VALS / 2)
-      return;
+      continue;
 
     unsigned int groupSize = j << 1;
     unsigned int index1   = (id / j) * groupSize + (id % j);
