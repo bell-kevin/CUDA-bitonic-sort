@@ -15,7 +15,7 @@ Background:
 
 Academia sometimes creates an image of a professor and students high on an ivory tower, effortlessly turning theory
 into pseudo code and into C++ code. <!-- In reality, we often just use Google or AI, find an existing algorithm, then clean
-that up. --> This assignment does not deny this reality.
+that up. This assignment does not deny this reality. -->
 
 A fairly straightforward description of a bitonic sort can be given in both text and in pictures.
 
